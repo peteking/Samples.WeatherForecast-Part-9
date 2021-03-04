@@ -1,0 +1,81 @@
+name: Build and Publish
+
+on:
+  push:
+    branches: [ main ]
+
+  workflow_dispatch:
+
+env:
+  image-name: ghcr.io/${{ github.repository_owner }}/samples-weatherforecast-part-9:${{ github.sha }}
+  image-name-unit-tests: unit-tests:latest
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+        with:
+          # Disabling shallow clone is recommended for improving relevancy of reporting
+          fetch-depth: 0
+
+      - name: Unit tests [build]
+        run: docker build --target unit-test -t ${{ env.image-name-unit-tests }} .
+
+      - name: Unit tests [run]
+        run: docker run --rm -v ${{ github.workspace }}/path/to/artifacts/testresults:/code/test/Samples.WeatherForecast.Api.UnitTest/TestResults ${{ env.image-name-unit-tests }}
+        
+      - name: Unit tests [upload artifacts]  
+        uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: unit-test-results
+          path: ${{ github.workspace }}/path/to/artifacts/testresults/
+          
+      - name: Unit tests [publish results]
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: Unit tests
+          path: ${{ github.workspace }}/path/to/artifacts/testresults/test_results_unit_test.trx
+          reporter: dotnet-trx
+          token: ${{ secrets.GITHUB_TOKEN }} 
+
+      - name: Code coverage [coveralls]  
+        id: coveralls
+        uses: coverallsapp/github-action@v1.1.2 
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }} 
+          path-to-lcov: ${{ github.workspace }}/path/to/artifacts/testresults/coverage.info
+      
+      - name: Code coverage response [coveralls]
+        run: echo "${{ steps.coveralls.outputs.coveralls-api-result }}"
+
+      - name: Code coverage [codecov]
+        uses: codecov/codecov-action@v1.2.1
+        with:
+          files: ${{ github.workspace }}/path/to/artifacts/testresults/coverage.info
+          verbose: true
+
+      - name: App [build]
+        run: docker build -t ${{ env.image-name }} .
+
+      - name: App [scan]
+        uses: azure/container-scan@v0
+        with:
+          image-name: ${{ env.image-name }}
+          severity-threshold: MEDIUM
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GH_CR }}
+
+      - name: Login to Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GH_CR }}
+
+      - name: App [publish]
+        run: docker push ${{ env.image-name }}
