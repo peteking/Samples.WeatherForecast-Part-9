@@ -10,4 +10,4 @@ queries:
   - name: Security and Quality
     uses: security-and-quality
   - name: CodeQL Repo
-    uses: https://github.com/github/codeql/tree/main/csharp/ql/src/codeql-suites/csharp-code-scanning.qls@master
+    uses: github.com/github/codeql/tree/main/csharp/ql/src/codeql-suites/csharp-code-scanning.qls@master
