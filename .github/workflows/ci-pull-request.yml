@@ -1,4 +1,4 @@
-name: unit-test-and-coverage
+name: CI Pull Request
 
 on:
   pull_request:
@@ -11,7 +11,7 @@ env:
   image-name-unit-tests: unit-tests:latest
 
 jobs:
-  unit-test-and-coverage:
+  ci:
     runs-on: ubuntu-latest
 
     steps:
