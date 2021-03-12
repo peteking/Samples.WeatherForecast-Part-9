@@ -43,16 +43,6 @@ jobs:
           reporter: dotnet-trx
           token: ${{ secrets.GITHUB_TOKEN }} 
 
-      - name: Code coverage [coveralls]  
-        id: coveralls
-        uses: coverallsapp/github-action@v1.1.2 
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }} 
-          path-to-lcov: ${{ github.workspace }}/path/to/artifacts/testresults/coverage.info
-      
-      - name: Code coverage response [coveralls]
-        run: echo "${{ steps.coveralls.outputs.coveralls-api-result }}"
-
       - name: Code coverage [codecov]
         uses: codecov/codecov-action@v1.2.1
         with:
