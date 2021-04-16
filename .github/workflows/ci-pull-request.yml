@@ -32,6 +32,14 @@ jobs:
         with:
           files: ${{ github.workspace }}/path/to/artifacts/testresults/coverage.info
           verbose: true
+          
+      - name: Code coverage [Code Climate]
+        uses: paambaati/codeclimate-action@v2.7.5
+        env:
+          CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
+        with:
+          coverageLocations: ${{ github.workspace }}/path/to/artifacts/testresults/coverage.info:lcov
+          prefix: /code/
 
       - name: App [build]
         run: docker build -t ${{ env.image-name }} .
