@@ -38,7 +38,7 @@ jobs:
         env:
           CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
         with:
-          coverageLocations: ${{ github.workspace }}/path/to/artifacts/testresults/coverage.info
+          coverageLocations: ${{ github.workspace }}/path/to/artifacts/testresults/coverage.info:lcov
 
       - name: App [build]
         run: docker build -t ${{ env.image-name }} .
