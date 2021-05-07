@@ -26,13 +26,7 @@ jobs:
 
       - name: Unit tests [run]
         run: docker run --rm -v ${{ github.workspace }}/path/to/artifacts/testresults:/code/test/Samples.WeatherForecast.Api.UnitTest/TestResults ${{ env.image-name-unit-tests }}
-
-      - name: Code coverage [codecov]
-        uses: codecov/codecov-action@v1.2.1
-        with:
-          files: ${{ github.workspace }}/path/to/artifacts/testresults/coverage.info
-          verbose: true
-          
+        
       - name: Code coverage [Code Climate]
         uses: paambaati/codeclimate-action@v2.7.5
         env:
