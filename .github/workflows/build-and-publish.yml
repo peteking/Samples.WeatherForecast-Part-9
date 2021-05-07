@@ -41,13 +41,7 @@ jobs:
           name: Unit tests
           path: ${{ github.workspace }}/path/to/artifacts/testresults/test_results_unit_test.trx
           reporter: dotnet-trx
-          token: ${{ secrets.GITHUB_TOKEN }} 
-
-      - name: Code coverage [codecov]
-        uses: codecov/codecov-action@v1.2.1
-        with:
-          files: ${{ github.workspace }}/path/to/artifacts/testresults/coverage.info
-          verbose: true
+          token: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Code coverage [Code Climate]
         uses: paambaati/codeclimate-action@v2.7.5
